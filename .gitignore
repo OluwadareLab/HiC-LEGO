@@ -1,0 +1,13 @@
+# Cache
+__pycache__/
+*.py[cod]
+
+# Inputs / outputs / logs
+inputs/
+logs/
+**/outputs/
+**/Outputs/
+**/output/
+src/preprocessing/gm12878/
+*.log
+nohup*.out

@@ -1,0 +1,20 @@
+name: hiclego-cpu
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - pandas
+  - networkx
+  - scikit-learn
+  - numba
+  - pip
+  - pip:
+      # CPU-only PyTorch (no NVIDIA driver / no GPU needed).
+      # For GPU by default, use environment.yml instead.
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - torch
+      - torchvision
+      - torch-geometric

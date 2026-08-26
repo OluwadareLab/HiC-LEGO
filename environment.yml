@@ -1,0 +1,29 @@
+name: hiclego
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - pandas
+  - networkx
+  - scikit-learn
+  - numba
+  - pip
+  - pip:
+      # Default: CUDA PyTorch (uses GPU when available; code falls back to CPU otherwise).
+      # Matches the working hicgat setup (cu128). Change the wheel if your driver needs it:
+      #   https://pytorch.org/get-started/locally/
+      - --extra-index-url https://download.pytorch.org/whl/cu128
+      - torch
+      - torchvision
+      - torch-geometric
+
+# CPU-only machines / no NVIDIA driver: use environment-cpu.yml instead:
+#   conda env create -f environment-cpu.yml
+#
+# Existing env that was created with CPU wheels — switch to GPU:
+#   conda activate hiclego
+#   pip uninstall -y torch torchvision
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
