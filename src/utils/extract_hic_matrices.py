@@ -21,7 +21,6 @@ def _normalize_chr_label(chr_name: str) -> str:
 
 
 def _chrom_candidates(chr_label: str) -> List[str]:
-    """Return likely .hic chromosome name spellings (order matters)."""
     label = _normalize_chr_label(chr_label)
     bare = label[3:] if label.lower().startswith("chr") else label
     candidates: List[str] = []
@@ -32,10 +31,7 @@ def _chrom_candidates(chr_label: str) -> List[str]:
 
 
 def _resolve_hic_chrom(hic_path: Path, chr_label: str) -> str:
-    """
-    Pick the chromosome name that exists in the .hic file.
-    Tries common spellings first; falls back to matching against getChromosomes().
-    """
+    
     import hicstraw
 
     candidates = _chrom_candidates(chr_label)
@@ -76,10 +72,7 @@ def _ensure_resolutions(hic_path: Path, needed: Sequence[int]) -> None:
 
 
 def _write_contacts_3col(records: Iterable, out_path: Path) -> Tuple[int, int]:
-    """
-    Write straw contact records as binX\\tbinY\\tcounts.
-    Skips non-finite counts. Returns (n_written, n_skipped).
-    """
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     n_written = 0
     n_skipped = 0
@@ -108,10 +101,7 @@ def extract_contacts(
     normalization: str = DEFAULT_NORM,
     data_type: str = DEFAULT_DATA_TYPE,
 ) -> Path:
-    """
-    Dump intrachromosomal contacts for one resolution to a 3-column contact list.
-    Uses hicstraw.straw (sparse streaming list) — same format as existing pipeline inputs.
-    """
+    
     import hicstraw
 
     print(
