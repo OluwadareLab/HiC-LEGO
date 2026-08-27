@@ -48,7 +48,7 @@ Example input files can be found in our zenodo repository. Paths may live under 
 
 Every run needs **domain lists** (a directory of any number of domain files; the pipeline builds an optimal domain list from them). For input Hi-C matrices, choose **one** of the following:
 
-**A. A `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for specified `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
+**A. `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for specified `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
 
 ```text
 domains/          # domain-list files
@@ -88,11 +88,10 @@ python run_all.py \
   --res 5kb \
   --suffix h2 \
   --domains-dir /path/to/domains \
-  --hic-matrix /path/to/chr22_5kb.txt \
-  --hic-1mb /path/to/chr22_1mb.txt
+  --hic-matrix /path/to/chr_5kb.txt \
+  --hic-1mb /path/to/chr_1mb.txt
 ```
 
-Useful options:
 
 | Flag | Meaning |
 |------|---------|
@@ -112,7 +111,7 @@ For experiment `gm12878` and run id `chr22_5kb_h2`:
 | Complete log | `logs/gm12878/chr22_5kb_h2_full_pipeline.log` |
 | Prepared inputs | `src/preprocessing/gm12878/chr22_5kb_h2/` |
 | Domain structures | `src/intra_domains/outputs/gm12878/chr22_5kb_h2/` |
-| Micro-blocks | `assembly/mb_generation/outputs/gm12878/chr22_5kb_h2_fixed_optimaldomains/` |
+| MB LEGO Blocks | `assembly/mb_generation/outputs/gm12878/chr22_5kb_h2_fixed_optimaldomains/` |
 | **Final global structure** | `assembly/global_assembly/outputs/gm12878/output_chr22_5kb_h2_global/` |
 
 Final assembly includes PDB/CSV coordinates and diagnostics under the global output folder.
