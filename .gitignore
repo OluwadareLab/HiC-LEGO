@@ -2,8 +2,7 @@
 __pycache__/
 *.py[cod]
 
-# Inputs / outputs / logs
-inputs/
+# Outputs / logs (inputs are tracked)
 logs/
 **/outputs/
 **/Outputs/

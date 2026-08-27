@@ -51,7 +51,7 @@ Every run needs to pass **domains** (which is a **folder** containing any number
 **A. `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for specified `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
 
 ```text
-domains/          # domain-list files
+domains/          # a folder with one/multiple domain-list files
 file.hic          # .hic file
 ```
 
