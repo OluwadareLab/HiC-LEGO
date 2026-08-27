@@ -12,7 +12,7 @@ HiC-LEGO reconstructs 3D chromosome structures from Hi-C data by building domain
 |------|---------|
 | Python | 3.10 |
 | Environment | Conda |
-| Key packages | PyTorch, PyTorch Geometric, NumPy, SciPy, pandas, NetworkX, scikit-learn, Numba |
+| Key packages | PyTorch, PyTorch Geometric, NumPy, SciPy, pandas, NetworkX, scikit-learn, Numba, hic-straw |
 
 ---
 
@@ -44,30 +44,30 @@ conda activate hiclego-cpu
 
 ### 3. Input requirements
 
-Example input files can be found in our zenodo repository. 
+Example input files can be found in our zenodo repository. Paths may live under `inputs/` or anywhere; pass them explicitly on the CLI.
 
-Place inputs under `inputs/` (or pass specific paths). An example chromosome folder looks like:
+Every run needs **domain lists** (a directory of any number of domain files; the pipeline builds an optimal domain list from them). For input Hi-C matrices, choose **one** of the following:
+
+**A. A `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for specified `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
 
 ```text
-inputs/<experiment>_chr22/
-├── domains/              # one or more domain-list files
-├── chr22_5kb.txt         # fine-resolution Hi-C contact list
-└── chr22_1mb.txt         # 1 Mb Hi-C contact list
+domains/          # domain-list files
+file.hic          # .hic file
 ```
 
-Required inputs:
+**B. Prebuilt contact lists** — fine-resolution (e.g. 5 kb) and 1 Mb matrices in 3-column format (`bin1_start`, `bin2_start`, `IF`):
 
-- **Domain lists** — directory of domain list files  
-- **Fine-resolution Hi-C** — contact list at the target resolution (e.g. 5 kb) in 3 column Hi-C interaction format
-- **1 Mb Hi-C** — used for the backbone structure in 3 column Hi-C interaction format  
-
-Step 0 of `run_all.py` prepares optimal domains, the 1 Mb backbone PDB, and the coordinate mapping into `src/preprocessing/<experiment>/`.
+```text
+domains/          # domain-list files
+chr22_5kb.txt     # fine-resolution contacts
+chr22_1mb.txt     # 1 Mb backbone contacts
+```
 
 ### 4. Run the pipeline
 
 Main entry point: **`run_all.py`**.
 
-**For example input folder:**
+**From a `.hic` file** (domains still required):
 
 ```bash
 python run_all.py \
@@ -75,10 +75,11 @@ python run_all.py \
   --chr chr22 \
   --res 5kb \
   --suffix h2 \
-  --input-dir inputs/gm12878_chr22
+  --domains-dir /path/to/domains \
+  --hic-file /path/to/file.hic
 ```
 
-**Using explicit paths:**
+**From already extracted contact matrices** 
 
 ```bash
 python run_all.py \
@@ -99,6 +100,7 @@ Useful options:
 | `--chr` | Chromosome (default: `chr22`) (required) |
 | `--res` | Resolution label or bp (`5kb`, `10kb`, `5000`, …) (required) |
 | `--suffix` | Run tag (default: `h2`) (Required) |
+| `--hic-file` | `.hic` path; extracts KR fine + 1 Mb contact lists |
 
 
 ### 5. Where outputs live

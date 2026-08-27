@@ -60,8 +60,9 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             "HiCGAT Master Pipeline (Unified Log). "
-            "Prefer explicit --domains-dir / --hic-matrix / --hic-1mb; "
-            "--input-dir remains as optional sugar for the legacy folder layout."
+            "Pass --hic-file to extract fine + 1 Mb KR matrices from a .hic via hic-straw; "
+            "or pass --hic-matrix / --hic-1mb (or --input-dir) for prebuilt contact lists. "
+            "Domains still come from --domains-dir or --input-dir."
         )
     )
     parser.add_argument("--experiment", type=str, required=True, help="Experiment/cell line name, e.g., hmec, imr90")
@@ -102,6 +103,15 @@ def main():
         help="Directory of domain-list files (any filenames). Overrides --input-dir/domains.",
     )
     parser.add_argument(
+        "--hic-file",
+        type=str,
+        default=None,
+        help=(
+            "Path to a .hic file. When set, Step 0a extracts KR-normalized fine-resolution "
+            "and 1 Mb contact lists via hic-straw (writes under src/preprocessing/...)."
+        ),
+    )
+    parser.add_argument(
         "--hic-matrix",
         type=str,
         default=None,
@@ -112,6 +122,11 @@ def main():
         type=str,
         default=None,
         help="1 Mb Hi-C contact list (any filename). Overrides --input-dir/<chr>_1mb.txt.",
+    )
+    parser.add_argument(
+        "--skip-hic-extract",
+        action="store_true",
+        help="With --hic-file: reuse existing extracted fine/1 Mb matrices if present.",
     )
     parser.add_argument(
         "--skip-optimal-domains",
@@ -148,18 +163,24 @@ def main():
         print(f"❌ Invalid resolution: {exc}")
         sys.exit(1)
 
-    run_step0 = bool(args.input_dir or args.domains_dir or args.hic_matrix or args.hic_1mb)
+    hic_file = args.hic_file.strip() if args.hic_file else None
+    hic_matrix_cli = args.hic_matrix
+    hic_1mb_cli = args.hic_1mb
+
+    run_step0 = bool(
+        args.input_dir or args.domains_dir or hic_matrix_cli or hic_1mb_cli or hic_file
+    )
     if run_step0:
         has_domains = bool(args.domains_dir or args.input_dir)
-        has_hic = bool(args.hic_matrix or args.input_dir)
-        has_1mb = bool(args.hic_1mb or args.input_dir)
+        has_hic = bool(hic_matrix_cli or args.input_dir or hic_file)
+        has_1mb = bool(hic_1mb_cli or args.input_dir or hic_file)
         missing = []
         if not has_domains:
             missing.append("--domains-dir (or --input-dir)")
         if not has_hic:
-            missing.append("--hic-matrix (or --input-dir)")
+            missing.append("--hic-matrix, --hic-file, or --input-dir")
         if not has_1mb:
-            missing.append("--hic-1mb (or --input-dir)")
+            missing.append("--hic-1mb, --hic-file, or --input-dir")
         if missing:
             print("❌ Step 0 is incomplete. Missing: " + ", ".join(missing))
             sys.exit(1)
@@ -168,6 +189,7 @@ def main():
     run_id = f"{chr_name}_{res_label}_{args.suffix}"
     run_group = os.path.join(experiment, run_id)
     unified_log = os.path.join(base_dir, "logs", experiment, f"{run_id}_full_pipeline.log")
+    extract_out_dir = os.path.join(base_dir, "src", "preprocessing", experiment, run_id)
 
     ensure_dir(os.path.join(base_dir, "logs", experiment))
     ensure_dir(os.path.join(base_dir, "assembly", "mb_generation", "outputs", experiment))
@@ -182,6 +204,7 @@ def main():
     mb_dir = os.path.join(base_dir, "assembly", "mb_generation")
     global_dir = os.path.join(base_dir, "assembly", "global_assembly")
     
+    script_extract = os.path.join(src_dir, "utils", "extract_hic_matrices.py")
     script0 = os.path.join(src_dir, "utils", "prepare_run_inputs.py")
     script1 = os.path.join(src_dir, "run_pipeline.py")
     script2 = os.path.join(mb_dir, "generate_mb_structures.py")
@@ -198,13 +221,41 @@ def main():
         print(f"📥 Input dir: {args.input_dir}")
     if args.domains_dir:
         print(f"📥 Domains dir: {args.domains_dir}")
-    if args.hic_matrix:
-        print(f"📥 Hi-C matrix: {args.hic_matrix}")
-    if args.hic_1mb:
-        print(f"📥 1 Mb Hi-C: {args.hic_1mb}")
+    if hic_file:
+        print(f"📥 .hic file: {hic_file}")
+    if hic_matrix_cli:
+        print(f"📥 Hi-C matrix: {hic_matrix_cli}")
+    if hic_1mb_cli:
+        print(f"📥 1 Mb Hi-C: {hic_1mb_cli}")
     print(f"📁 MB outputs: assembly/mb_generation/outputs/{experiment}/{run_id}_fixed_optimaldomains/")
     print(f"📁 Global outputs: assembly/global_assembly/outputs/{experiment}/output_{run_id}_global/")
     print("-" * 60)
+
+    if hic_file:
+        if not os.path.isfile(script_extract):
+            print(f"❌ Missing extract script: {script_extract}")
+            sys.exit(1)
+        hic_path = hic_file if os.path.isabs(hic_file) else os.path.join(base_dir, hic_file)
+        if not os.path.isfile(hic_path):
+            print(f"❌ .hic file not found: {hic_path}")
+            sys.exit(1)
+        ensure_dir(extract_out_dir)
+        cmd_extract = (
+            f"python -u {script_extract} "
+            f"--hic-file {hic_path} "
+            f"--chr {chr_name} "
+            f"--res {res_label} "
+            f"--output-dir {extract_out_dir}"
+        )
+        if args.skip_hic_extract:
+            cmd_extract += " --skip-fine --skip-1mb"
+        step_times['Step 0a: Extract matrices from .hic'] = run_command(
+            cmd_extract, unified_log, base_dir, "Step 0a"
+        )
+        if not hic_matrix_cli:
+            hic_matrix_cli = os.path.join(extract_out_dir, f"{chr_name}_{res_label}.txt")
+        if not hic_1mb_cli:
+            hic_1mb_cli = os.path.join(extract_out_dir, f"{chr_name}_1mb.txt")
 
     if run_step0:
         if not os.path.isfile(script0):
@@ -222,10 +273,10 @@ def main():
             cmd0 += f" --input-dir {args.input_dir}"
         if args.domains_dir:
             cmd0 += f" --domains-dir {args.domains_dir}"
-        if args.hic_matrix:
-            cmd0 += f" --hic-matrix {args.hic_matrix}"
-        if args.hic_1mb:
-            cmd0 += f" --hic-1mb {args.hic_1mb}"
+        if hic_matrix_cli:
+            cmd0 += f" --hic-matrix {hic_matrix_cli}"
+        if hic_1mb_cli:
+            cmd0 += f" --hic-1mb {hic_1mb_cli}"
         if args.skip_optimal_domains:
             cmd0 += " --skip-optimal-domains"
         if args.skip_1mb_structure:

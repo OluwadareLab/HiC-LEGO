@@ -1,6 +1,7 @@
 name: hiclego-cpu
 channels:
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
   - python=3.10
@@ -10,6 +11,8 @@ dependencies:
   - networkx
   - scikit-learn
   - numba
+  # Prefer conda hic-straw (needs libcurl); pip install hic-straw requires curl headers.
+  - hic-straw
   - pip
   - pip:
       # CPU-only PyTorch (no NVIDIA driver / no GPU needed).

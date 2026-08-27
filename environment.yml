@@ -1,6 +1,7 @@
 name: hiclego
 channels:
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
   - python=3.10
@@ -10,6 +11,7 @@ dependencies:
   - networkx
   - scikit-learn
   - numba
+  - hic-straw
   - pip
   - pip:
       # Default: CUDA PyTorch (uses GPU when available; code falls back to CPU otherwise).
