@@ -46,7 +46,7 @@ conda activate hiclego-cpu
 
 Example input files can be found in our zenodo repository. Paths may live under `inputs/` or anywhere; pass them explicitly on the CLI.
 
-Every run needs **domain lists** (a directory of any number of domain files; the pipeline builds an optimal domain list from them). For input Hi-C matrices, choose **one** of the following:
+Every run needs to pass **domains** (which is a **folder** containing any number of domain list files in .txt format; the pipeline builds an optimal domain list from them). For input Hi-C matrices, choose **one** of the following:
 
 **A. `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for specified `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
 
