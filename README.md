@@ -43,9 +43,9 @@ conda activate hiclego-cpu
 
 ### 3. Input requirements
 
-Example input files are available on our [Zenodo repository](https://doi.org/10.5281/zenodo.22085228). Paths may live under `inputs/` or anywhere; pass them explicitly on the CLI.
+Example input files are available on our [Zenodo repository](https://doi.org/10.5281/zenodo.22085228). Paths can be under `inputs/` or anywhere; you can pass them on the CLI.
 
-Every run needs **domains** (a folder of domain list `.txt` files; the pipeline builds an optimal domain list from them). For Hi-C, choose **one** of the following:
+Every run needs **domains** (a folder of domain list `.txt` files; the pipeline builds an optimal domain list from them). For input format, choose **one** of the following:
 
 | Option | What you provide | Walkthrough |
 |--------|------------------|-------------|
@@ -71,7 +71,7 @@ chr22_1mb.txt     # 1 Mb backbone 3 column contact matrix
 
 Main entry point: **`run_all.py`**.
 
-**A. From a `.hic` file** (extracts fine + 1 Mb contact lists; domains still required):
+**A. From a `.hic` file** (domains still required):
 
 ```bash
 python run_all.py \
@@ -96,13 +96,13 @@ python run_all.py \
   --hic-1mb /path/to/<chr>_1mb.txt
 ```
 
-Step-by-step examples for GM12878 chr22 at 5 kb follow below.
+Examples for GM12878 chr22 run at 5 kb are below.
 
 #### Example 1: From a `.hic` file (GM12878 chr22 at 5 kb)
 
 **1. Download the Hi-C file**
 
-Access the [GSE63525 GEO entry](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525) for Hi-C data from Rao et al. (2014). In our work we used `GSE63525_GM12878_insitu_primary+replicate_combined.hic` (~51 GB).
+Access the [GSE63525 GEO entry](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE63525) for Hi-C data from Rao et al. (2014). In our work we used `GSE63525_GM12878_insitu_primary+replicate_combined.hic`.
 
 ```bash
 cd inputs/gm12878_with_hic
