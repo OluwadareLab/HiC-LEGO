@@ -49,8 +49,8 @@ Every run needs **domains** (a folder of domain list `.txt` files; the pipeline 
 
 | Option | What you provide | Walkthrough |
 |--------|------------------|-------------|
-| **A. `.hic` file** | `domains/` + a Juicebox `.hic` | [Example 1](#example-1-from-a-hic-file-gm12878-chr22--5-kb) |
-| **B. Prebuilt contact lists** | `domains/` + fine + 1 Mb matrices | [Example 2](#example-2-from-prebuilt-contact-lists-gm12878-chr22--5-kb) |
+| **A. `.hic` file** | `domains/` + a Juicebox `.hic` | [Example 1](#example-1-from-a-hic-file-gm12878-chr22-at-5-kb) |
+| **B. Prebuilt contact lists** | `domains/` + fine + 1 Mb matrices | [Example 2](#example-2-from-prebuilt-contact-lists-gm12878-chr22-at-5-kb) |
 
 **A. `.hic` file** — the pipeline extracts KR-normalized fine-resolution and 1 Mb contact lists for `--chr` / `--res` via [hic-straw](https://pypi.org/project/hic-straw/) (that resolution and KR must already exist in the `.hic`):
 
@@ -78,7 +78,7 @@ python run_all.py \
   --experiment <cell_line> \
   --chr <chr> \
   --res <resolution> \
-  --suffix <run_tag> \
+  --suffix h2 \
   --domains-dir /path/to/domains \
   --hic-file /path/to/file.hic
 ```
@@ -90,13 +90,13 @@ python run_all.py \
   --experiment <cell_line> \
   --chr <chr> \
   --res <resolution> \
-  --suffix <run_tag> \
+  --suffix h2 \
   --domains-dir /path/to/domains \
   --hic-matrix /path/to/<chr>_<res>.txt \
   --hic-1mb /path/to/<chr>_1mb.txt
 ```
 
-Step-by-step examples for GM12878 chr22 @ 5 kb follow below.
+Step-by-step examples for GM12878 chr22 at 5 kb follow below.
 
 #### Example 1: From a `.hic` file (GM12878 chr22 at 5 kb)
 
@@ -139,7 +139,7 @@ python run_all.py \
   --hic-file inputs/gm12878_with_hic/GSE63525_GM12878_insitu_primary+replicate_combined.hic
 ```
 
-#### Example 2: From prebuilt contact lists (GM12878 chr22 @ 5 kb)
+#### Example 2: From prebuilt contact lists (GM12878 chr22 at 5 kb)
 
 **1. Download example inputs**
 
