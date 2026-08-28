@@ -199,7 +199,7 @@ python run_all.py \
 | `--hic-file` | `.hic` path; extracts KR fine + 1 Mb contact lists |
 | `--skip-hic-extract` | With `--hic-file`: reuse existing extracted matrices if present |
 
-### 5. Where outputs live
+### 5. Outputs and File Locations
 
 For experiment `gm12878` and run id `chr22_5kb_h2`:
 
