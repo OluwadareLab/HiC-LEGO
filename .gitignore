@@ -1,0 +1,12 @@
+# Cache
+__pycache__/
+*.py[cod]
+
+# Outputs / logs (inputs are tracked)
+logs/
+**/outputs/
+**/Outputs/
+**/output/
+src/preprocessing/gm12878/
+*.log
+nohup*.out
